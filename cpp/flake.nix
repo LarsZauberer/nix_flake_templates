@@ -18,7 +18,7 @@
     });
 
     devShells = foreachSystem (system: pkgs: {
-      default = pkgs.callPackage ./package.nix {
+      default = pkgs.callPackage ./shell.nix {
         inherit (pkgs) mkShell;
         package = inputs.self.packages.${system}.${pname};
       };

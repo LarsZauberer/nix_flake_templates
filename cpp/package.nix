@@ -22,6 +22,6 @@ pkgs.stdenv.mkDerivation {
     mkdir -p $out/lib
     mkdir -p $out/include
 
-    cp ${pname} $out/${pname}
+    cp ${pname} $out/bin/${pname}
   '';
 }
