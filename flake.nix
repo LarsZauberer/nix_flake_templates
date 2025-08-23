@@ -11,6 +11,10 @@
         path = ./cpp;
         description = "Simple cpp nix flake template";
       };
+      rust = {
+        path = ./rust;
+        description = "Simple rust nix flake template";
+      };
     };
   };
 }
