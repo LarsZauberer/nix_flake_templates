@@ -15,6 +15,10 @@
         path = ./rust;
         description = "Simple rust nix flake template";
       };
+      ocaml = {
+        path = ./ocaml;
+        description = "Simple ocaml nix flake template";
+      };
     };
   };
 }
