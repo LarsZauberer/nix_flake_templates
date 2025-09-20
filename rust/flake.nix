@@ -21,6 +21,8 @@
 
         buildInputs = with pkgs; [
           (fenix.packages.x86_64-linux.default.toolchain)
+          rust-analyzer
+          rustfmt
         ];
       };
     });
