@@ -1,4 +1,6 @@
 .direnv/
 .envrc
-build/
 target/
+
+build/
+!build/README.md

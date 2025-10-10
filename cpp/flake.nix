@@ -23,10 +23,6 @@
 
           gtest
         ];
-
-        shellHook = ''
-          export BUILD_DIR=./build
-        '';
       };
     });
 }
