@@ -3,25 +3,30 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = inputs: let
-    foreachSystem = f: inputs.nixpkgs.lib.mapAttrs f inputs.nixpkgs.legacyPackages;
+  outputs = {
+    nixpkgs,
+    flake-utils,
+    ...
+  }:
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      devShells.default = pkgs.mkShell {
+        name = "devShell";
 
-    pname = "";
-    version = "1.0";
-  in {
-    packages = foreachSystem (system: pkgs: {
-      ${pname} = pkgs.callPackage ./package.nix {inherit pkgs pname version;};
+        buildInputs = with pkgs; [
+          gcc
+          gnumake
 
-      default = inputs.self.packages.${system}.${pname};
-    });
+          gtest
+        ];
 
-    devShells = foreachSystem (system: pkgs: {
-      default = pkgs.callPackage ./shell.nix {
-        inherit (pkgs) mkShell;
-        package = inputs.self.packages.${system}.${pname};
+        shellHook = ''
+          export BUILD_DIR=./build
+        '';
       };
     });
-  };
 }
