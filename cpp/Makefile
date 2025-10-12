@@ -20,11 +20,11 @@ test: $(BUILD_DIR)/tests
 	$(BUILD_DIR)/tests
 
 $(BUILD_DIR)/main: $(BUILD_DIR)/main.o
-	$(CXX) $(CXXFLAGS) $(LIBS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 $(BUILD_DIR)/tests: $(BUILD_DIR)/tests.o
-	$(CXX) $(CXXFLAGS) $(LIBS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(LIBS) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) -c -o $@ $^
 
