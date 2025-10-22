@@ -25,6 +25,9 @@ $(BUILD_DIR)/main: $(BUILD_DIR)/main.o
 $(BUILD_DIR)/tests: $(BUILD_DIR)/tests.o
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c -o $@ $^
 
