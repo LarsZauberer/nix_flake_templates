@@ -3,4 +3,5 @@
 target/
 
 build/
-!build/README.md
+bin/
+lib/
