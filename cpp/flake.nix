@@ -20,6 +20,7 @@
         buildInputs = with pkgs; [
           gcc
           gnumake
+          gdb
 
           gtest
         ];
