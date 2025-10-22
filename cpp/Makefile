@@ -1,33 +1,92 @@
 CXX := g++
-CXXFLAGS := -O3 -Wall
-
+CXXFLAGS := -O3 -Wall -std=c++17 -Iinclude
+LDFLAGS := 
 LIBS := -lgtest -lgtest_main -lgmock -lgmock_main -pthread
 
-BUILD_DIR := ./build
-SRC_DIR := .
+# Directories
+SRC_DIR := src
+INCLUDE_DIR := include
+TEST_DIR := tests
+BUILD_DIR := build
+LIB_DIR := lib
+BIN_DIR := bin
 
-all: $(BUILD_DIR)/main $(BUILD_DIR)/tests
+# Source files
+SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
+TEST_SOURCES := $(wildcard $(TEST_DIR)/*.cpp)
+OBJECTS := $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
+TEST_OBJECTS := $(TEST_SOURCES:$(TEST_DIR)/%.cpp=$(BUILD_DIR)/test_%.o)
+
+# Library name
+LIB_NAME := mylib
+STATIC_LIB := $(LIB_DIR)/lib$(LIB_NAME).a
+SHARED_LIB := $(LIB_DIR)/lib$(LIB_NAME).so
+
+# Executables
+MAIN_EXEC_NAME := main
+MAIN_EXEC := $(BIN_DIR)/$(MAIN_EXEC_NAME)
+TEST_EXEC := $(BIN_DIR)/tests
+
+.PHONY: all clean executable static shared test run run-tests
+
+all: executable static shared test
+
+executable: $(MAIN_EXEC)
+
+static: $(STATIC_LIB)
+
+shared: $(SHARED_LIB)
+
+test: $(TEST_EXEC)
 
 clean:
-	rm $(BUILD_DIR)/*.o
-	rm $(BUILD_DIR)/main
-	rm $(BUILD_DIR)/tests
+	rm -rf $(BUILD_DIR)/*
+	rm -rf $(LIB_DIR)/*
+	rm -rf $(BIN_DIR)/*
 
-run: $(BUILD_DIR)/main
-	$(BUILD_DIR)/main
+run: $(MAIN_EXEC)
+	$(MAIN_EXEC)
 
-test: $(BUILD_DIR)/tests
-	$(BUILD_DIR)/tests
+run-tests: $(TEST_EXEC)
+	$(TEST_EXEC)
 
-$(BUILD_DIR)/main: $(BUILD_DIR)/main.o
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+# Create directories
+$(BUILD_DIR) $(LIB_DIR) $(BIN_DIR):
+	mkdir -p $@
 
-$(BUILD_DIR)/tests: $(BUILD_DIR)/tests.o
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+# Executable target
+$(MAIN_EXEC): $(OBJECTS) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS) $(LIBS)
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+# Static library target
+$(STATIC_LIB): $(OBJECTS) | $(LIB_DIR)
+	ar rcs $@ $^
 
+# Shared library target
+$(SHARED_LIB): $(OBJECTS) | $(LIB_DIR)
+	$(CXX) $(CXXFLAGS) -shared -fPIC -o $@ $^ $(LDFLAGS)
+
+# Test executable target
+$(TEST_EXEC): $(TEST_OBJECTS) $(STATIC_LIB) | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -o $@ $(TEST_OBJECTS) -L$(LIB_DIR) -l$(LIB_NAME) $(LIBS)
+
+# Object files for source
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) -c -o $@ $^
+	$(CXX) $(CXXFLAGS) -fPIC -c -o $@ $<
 
+# Object files for tests
+$(BUILD_DIR)/test_%.o: $(TEST_DIR)/%.cpp | $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
+# Help target
+help:
+	@echo "Available targets:"
+	@echo "  all         - Build executable, static library, shared library, and tests"
+	@echo "  executable  - Build main executable"
+	@echo "  static      - Build static library"
+	@echo "  shared      - Build shared library"
+	@echo "  test        - Build test executable"
+	@echo "  run         - Run main executable"
+	@echo "  run-tests   - Run tests"
+	@echo "  clean       - Clean build artifacts"
+	@echo "  help        - Show this help message"
