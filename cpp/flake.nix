@@ -46,10 +46,13 @@
 
           # Install headers
           cp -r include/* $out/include/
+
+          # Delete the testing executable
+          rm $out/bin/tests
         '';
 
         meta = {
-          description = self.description;
+          description = "A simple cpp template";
           license = pkgs.lib.licenses.mit;
         };
       };
