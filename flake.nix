@@ -7,6 +7,10 @@
 
   outputs = inputs: {
     templates = {
+      default = {
+        path = ./default;
+        description = "Simple default nix flake template";
+      };
       cpp = {
         path = ./cpp;
         description = "Simple cpp nix flake template";
