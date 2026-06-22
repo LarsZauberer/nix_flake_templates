@@ -4,26 +4,65 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    fenix.url = "github:nix-community/fenix";
+    rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    flake-utils,
-    fenix,
-  }:
-    flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-    in {
-      devShells.default = pkgs.mkShell {
-        name = "devShell";
+  outputs =
+    {
+      self,
+      nixpkgs,
+      flake-utils,
+      rust-overlay,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pname = "my_project";
+        version = "0.1.0";
 
-        buildInputs = with pkgs; [
-          (fenix.packages.x86_64-linux.default.toolchain)
-          rust-analyzer
-          rustfmt
-        ];
-      };
-    });
+        overlays = [ rust-overlay.overlays.default ];
+        pkgs = import nixpkgs {
+          inherit system overlays;
+          config.allowUnfree = true;
+        };
+        nightlyRust = pkgs.rust-bin.selectLatestNightlyWith (
+          toolchain:
+          toolchain.default.override {
+            extensions = [
+              "rust-src"
+              "rustfmt"
+              "miri"
+              "rust-analyzer"
+              "llvm-tools-preview"
+            ];
+          }
+        );
+      in
+      {
+        checks = {
+          default =
+            let
+              rustPlatform = pkgs.makeRustPlatform {
+                cargo = nightlyRust;
+                rustc = nightlyRust;
+              };
+            in
+            rustPlatform.buildRustPackage {
+              inherit pname version;
+              src = ./.;
+              cargoLock.lockFile = ./Cargo.lock;
+              doCheck = true;
+            };
+        };
+        devShells.default = pkgs.mkShell {
+          name = "devShell";
+
+          buildInputs = with pkgs; [
+            nightlyRust
+            pkgs.cargo-llvm-cov
+            pkgs.cargo-expand
+          ];
+        };
+      }
+    );
 }
