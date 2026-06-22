@@ -57,7 +57,7 @@
         devShells.default = pkgs.mkShell {
           name = "devShell";
 
-          buildInputs = with pkgs; [
+          buildInputs = [
             nightlyRust
             pkgs.cargo-llvm-cov
             pkgs.cargo-expand
