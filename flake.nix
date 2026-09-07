@@ -23,6 +23,10 @@
         path = ./ocaml;
         description = "Simple ocaml nix flake template";
       };
+      python = {
+        path = ./python;
+        description = "Simple python nix flake template";
+      };
     };
   };
 }
