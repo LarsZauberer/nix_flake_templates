@@ -1,3 +1,7 @@
 .direnv/
-result
-.envrc
+/result
+/result-*
+/target/
+.env
+.env.*
+!.env.example

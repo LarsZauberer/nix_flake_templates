@@ -1,0 +1,3 @@
+[build]
+# Broken links and other rustdoc warnings fail local and CI documentation builds.
+rustdocflags = ["-D", "warnings"]

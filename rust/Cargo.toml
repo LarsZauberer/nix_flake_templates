@@ -1,0 +1,45 @@
+[package]
+name         = "my_project"
+version      = "0.1.0"
+edition      = "2024"
+rust-version = "1.97"
+description  = "A Rust application and library"
+readme       = "README.md"
+publish      = false
+
+[dependencies]
+
+# Apply these to the library, binary, examples, and tests alike.
+[lints.rust]
+warnings                      = "deny"
+missing_docs                  = "deny"
+missing_debug_implementations = "deny"
+unreachable_pub               = "deny"
+unused_must_use               = "deny"
+unused_lifetimes              = "deny"
+unused_qualifications         = "deny"
+elided_lifetimes_in_paths     = "deny"
+rust_2018_idioms              = { level = "deny", priority = -1 }
+
+[lints.clippy]
+all                        = { level = "deny", priority = -1 }
+pedantic                   = { level = "deny", priority = -1 }
+nursery                    = { level = "deny", priority = -1 }
+dbg_macro                  = "deny"
+todo                       = "deny"
+unimplemented              = "deny"
+unwrap_used                = "deny"
+expect_used                = "deny"
+panic                      = "deny"
+indexing_slicing           = "deny"
+mem_forget                 = "deny"
+exit                       = "deny"
+undocumented_unsafe_blocks = "deny"
+allow_attributes           = "deny"
+
+# Retain unwinding and overflow checks; optimize release artifacts together.
+[profile.release]
+lto             = "thin"
+codegen-units   = 1
+overflow-checks = true
+strip           = "debuginfo"

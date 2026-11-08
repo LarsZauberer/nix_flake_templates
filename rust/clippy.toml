@@ -1,0 +1,5 @@
+avoid-breaking-exported-api  = false
+doc-valid-idents             = ["GitHub", "NixOS", ".."]
+too-many-arguments-threshold = 5
+too-many-lines-threshold     = 80
+type-complexity-threshold    = 200
